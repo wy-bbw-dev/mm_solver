@@ -16,12 +16,12 @@ void Board::placeMeeple(Meeple meeple, Coordinate coordinate) {
 }
 
 void Board::addHorizontalBarrier(Position x, Position y) {
-    auto inserted_at = horizontalBarriers.insert({x, {y, y + 1}});
+    auto inserted_at = horizontalBarriers.insert({x,  y });
     assert(inserted_at != horizontalBarriers.end());
 }
 
 void Board::addVerticalBarrier(Position x, Position y) {
-    auto inserted_at = verticalBarriers.insert({y, {x, x + 1}});
+    auto inserted_at = verticalBarriers.insert({y,  x});
     assert(inserted_at != verticalBarriers.end());
 }
 
@@ -41,8 +41,7 @@ PositionCollection Board::horizontalStops(const Position& position) const {
     PositionCollection stops;
     auto range = horizontalBarriers.equal_range(position);
     for (auto it = range.first; it != range.second; ++it) {
-        stops.push_back(it->second.first);
-        stops.push_back(it->second.second);
+        stops.push_back(it->second);
     }
     return stops;
 }
@@ -51,8 +50,7 @@ PositionCollection Board::verticalStops(const Position &position) const {
     PositionCollection stops;
     auto range = verticalBarriers.equal_range(position);
     for (auto it = range.first; it != range.second; ++it) {
-        stops.push_back(it->second.first);
-        stops.push_back(it->second.second);
+        stops.push_back(it->second);
     }
     return stops;
 }

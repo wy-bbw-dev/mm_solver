@@ -3,8 +3,14 @@
 //
 
 #include <model/Board.h>
+#include <model/Meeple.h>
 #include <view/ascii/BoardPrinter.h>
 #include <string>
+#include <stdexcept>
+
+#include <spdlog/spdlog.h>
+
+#include <iostream>
 
 
 namespace {
@@ -37,7 +43,49 @@ namespace {
             board_string[i * PRINT_WIDTH(board) + 1] = '|';
             board_string[i * PRINT_WIDTH(board) + PRINT_WIDTH(board) - 2] = '|';
         }
+    }
 
+    Position string_index(const Board& board, const Coordinate coordinate) {
+        return (2 * coordinate.second + 2)  * PRINT_WIDTH(board) + 2 * coordinate.first + 2;
+
+    }
+
+    void printMeeples(const Board &board, ascii::BoardString &board_string) {
+
+        for (int i = 0; i < 8; ++i) {
+            const Meeple meeple = static_cast<Meeple>(i);
+            try {
+                const auto meeple_coordinate = board.meepleLocation(meeple);
+                board_string[string_index(board, meeple_coordinate)] = '0' + static_cast<char>(i);
+            } catch (const std::out_of_range &e) {
+//                spdlog::info("Meeple " + std::to_string(static_cast<int>(meeple)) + " not found");
+ // TODO: proper logging
+            }
+        }
+    }
+
+    void printTeleports(const Board &board, ascii::BoardString &board_string) {
+        for (const auto& teleport : board.teleportLocations()) {
+            board_string[string_index(board, teleport)] = 'T';
+        }
+    }
+
+    void printBarriers(const Board &board, ascii::BoardString &board_string) {
+        for (int i = 0; i < board.height(); ++i) {
+            PositionCollection barriers = board.horizontalStops(i);
+            for (const Position barrier_position : barriers) {
+                Position index = string_index(board, {i, barrier_position });
+                board_string[index + 1] = '|';
+            }
+        }
+
+        for (int i = 0; i < board.width(); ++i) {
+            PositionCollection barriers = board.verticalStops(i);
+            for (const Position barrier_position : barriers) {
+                Position index = string_index(board, {barrier_position, i});
+                board_string[index + PRINT_WIDTH(board)] = '-';
+            }
+        }
     }
 }
 
@@ -51,5 +99,8 @@ ascii::BoardString ascii::print(const Board& board) {
     add_linebreaks(board, board_string);
     printAxis(board, board_string);
     printFrame(board, board_string);
+    printTeleports(board, board_string);
+    printBarriers(board, board_string);
+    printMeeples(board, board_string);
     return board_string;
 }

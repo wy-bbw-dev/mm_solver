@@ -14,7 +14,6 @@
 
 
 
-using BarrierPosition = std::pair<Position, Position>;
 using CoordinateCollection = std::vector<Coordinate>;
 using PositionCollection = std::vector<Position>;
 
@@ -44,8 +43,8 @@ public:
 
 private:
     std::unordered_map<Meeple, Coordinate > meeplePositions;
-    std::unordered_multimap<Position, BarrierPosition> horizontalBarriers;
-    std::unordered_multimap<Position, BarrierPosition> verticalBarriers;
+    std::unordered_multimap<Position, Position> horizontalBarriers;
+    std::unordered_multimap<Position, Position> verticalBarriers;
     CoordinateCollection teleport;
     Coordinate destination;
     Position maxWidth;
