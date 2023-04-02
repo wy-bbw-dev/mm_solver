@@ -10,32 +10,26 @@ jobs:
           password: $GITHUB_REGISTRY_PASSWORD
     steps:
       - checkout
-      - when:
-          condition:
-            or:
-              - equal: [ develop, << pipeline.git.branch >> ]
-              - equal: [ master, << pipeline.git.branch >> ]
-          steps:
-            - run:
-                name: sonarcloud needs some extra love - this is not copy paste it is not
-                command: |
-                  mkdir build
-                  cd build
-                  wget https://sonarcloud.io/static/cpp/build-wrapper-linux-x86.zip
-                  unzip build-wrapper-linux-x86.zip
-            - run:
-                name: build mmsolver
-                command: |
-                  cd build
-                  conan profile detect
-                  cmake .. -DCMAKE_CXX_COMPILER=g++ -DCMAKE_C_COMPILER=gcc -G Ninja -DCMAKE_BUILD_TYPE=Debug -DENABLE_COVERAGE=ON
-                  ./build-wrapper-linux-x86/build-wrapper-linux-x86-64 --out-dir /tmp cmake --build .
-            - run:
-                name: run tests
-                command: |
-                  cd build
-                  ctest . --output-on-failure
-                  gcovr -r .. --sonarqube coverage.xml
+      - run:
+          name: sonarcloud needs some extra love - this is not copy paste it is not
+          command: |
+            mkdir build
+            cd build
+            wget https://sonarcloud.io/static/cpp/build-wrapper-linux-x86.zip
+            unzip build-wrapper-linux-x86.zip
+      - run:
+          name: build mmsolver
+          command: |
+            cd build
+            conan profile detect
+            cmake .. -DCMAKE_CXX_COMPILER=g++ -DCMAKE_C_COMPILER=gcc -G Ninja -DCMAKE_BUILD_TYPE=Debug -DENABLE_COVERAGE=ON
+            ./build-wrapper-linux-x86/build-wrapper-linux-x86-64 --out-dir /tmp cmake --build .
+      - run:
+          name: run tests
+          command: |
+            cd build
+            ctest . --output-on-failure
+            gcovr -r .. --sonarqube coverage.xml
       - sonarcloud/scan
 orbs:
   sonarcloud: sonarsource/sonarcloud@1.1.0
@@ -44,3 +38,8 @@ workflows:
     jobs:
       - build:
           context: SonarCloud
+          filters:
+            branches:
+              only:
+                - develop
+                - master
