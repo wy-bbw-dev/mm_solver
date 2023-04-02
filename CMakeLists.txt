@@ -9,8 +9,10 @@ execute_process(
         COMMAND_ERROR_IS_FATAL ANY
         )
 
+find_package(fmt REQUIRED HINTS ${CMAKE_BINARY_DIR}/_conan)
 find_package(Catch2 REQUIRED HINTS ${CMAKE_BINARY_DIR}/_conan)
 find_package(spdlog REQUIRED HINTS ${CMAKE_BINARY_DIR}/_conan)
+
 
 add_library(mm_solver_lib OBJECT)
 target_sources(mm_solver_lib PRIVATE
