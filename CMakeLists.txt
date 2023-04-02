@@ -13,6 +13,21 @@ find_package(fmt REQUIRED HINTS ${CMAKE_BINARY_DIR}/_conan)
 find_package(Catch2 REQUIRED HINTS ${CMAKE_BINARY_DIR}/_conan)
 find_package(spdlog REQUIRED HINTS ${CMAKE_BINARY_DIR}/_conan)
 
+option(ENABLE_COVERAGE "enable coverage" OFF)
+if (ENABLE_COVERAGE)
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} --coverage -fprofile-arcs -ftest-coverage")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --coverage -fprofile-arcs -ftest-coverage")
+    SET(GCC_COVERAGE_LINK_FLAGS    "-lgcov")
+    SET(CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} ${GCC_COVERAGE_LINK_FLAGS}")
+    add_custom_target(init
+        COMMAND ${CMAKE_MAKE_PROGRAM} clean
+        COMMAND rm -f ${OBJECT_DIR}/*.gcno
+        COMMAND rm -f ${OBJECT_DIR}/*.gcda
+        WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+    )
+endif()
+
+
 
 add_library(mm_solver_lib OBJECT)
 target_sources(mm_solver_lib PRIVATE
