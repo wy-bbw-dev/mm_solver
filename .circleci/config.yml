@@ -1,0 +1,29 @@
+version: 2.1
+
+# Define the jobs we want to run for this project
+jobs:
+  build:
+    docker:
+      - image: ghcr.io/wy-bbw/mm_solver_builder
+        auth:
+          username: wy-bbw
+          password: $GITHUB_REGISTRY_PASSWORD
+    steps:
+      - checkout
+      - when:
+          condition:
+            or:
+              - equal: [ develop, << pipeline.git.branch >> ]
+              - equal: [ master, << pipeline.git.branch >> ]
+          steps:
+            - run:
+                name: build mmsolver
+                command: |
+                  mkdir build
+                  cd build
+                  cmake .. -DCMAKE_CXX_COMPILER=g++ -DCMAKE_C_COMPILER=gcc -G Ninja -DCMAKE_BUILD_TYPE=Debug
+                  cmake --build . --parallel
+            - run:
+                name: run tests
+                command: |
+                  ctest --test-dir build
