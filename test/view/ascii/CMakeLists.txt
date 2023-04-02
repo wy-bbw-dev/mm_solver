@@ -5,4 +5,5 @@ target_sources(BoardPrinterTest PRIVATE
         BoardPrinterTest.cpp
         )
 
-add_test(BoardPrinterTest BoardPrinterTest)
+add_test(NAME BoardPrinterTest
+        COMMAND BoardPrinterTest)
