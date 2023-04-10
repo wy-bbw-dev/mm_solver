@@ -20,6 +20,16 @@ using CoordinateCollection = std::vector<Coordinate>;
 using PositionCollection = std::vector<Position>;
 using MeepleSet = std::set<Meeple>;
 
+struct ColumnBlocks{
+    const std::optional<Position> top;
+    const std::optional<Position> bottom;
+};
+
+struct RowBlocks {
+    const std::optional<Position> left;
+    const std::optional<Position> right;
+};
+
 template<>
 struct std::hash<Coordinate> {
     std::size_t operator()(const Coordinate &coordinate) const {
@@ -45,13 +55,13 @@ public:
     Position width() const;
     Position height() const;
 
-    MeepleSet* meeples_in_row(const Position& position) const;
-    MeepleSet* meeples_in_column(const Position& position) const;
+    RowBlocks blocked_by_meeple_in_row(const Coordinate& coord) const;
+    ColumnBlocks blocked_by_meeple_in_column(const Coordinate& coord) const;
 
 private:
     std::unordered_map<Meeple, Coordinate > meeple_positions;
-    std::unordered_map<Position, std::set<Meeple> > m_meeples_in_row;
-    std::unordered_map<Position, std::set<Meeple> > m_meeples_in_column;
+    std::unordered_multimap<Position, Meeple> m_meeples_in_row;
+    std::unordered_multimap<Position, Meeple> m_meeples_in_column;
 
     std::unordered_multimap<Position, Position> m_horizontal_barriers;
     std::unordered_multimap<Position, Position> m_vertical_barriers;

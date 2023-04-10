@@ -5,6 +5,7 @@
 #pragma once
 
 #include <cstdint>
+#include <ostream>
 #include "typedefs.h"
 #include "Meeple.h"
 #include "Board.h"
@@ -14,7 +15,8 @@ using MoveCollection = std::vector<Move>;
 
 struct Move {
     Coordinate to;
-    bool special;
+    auto operator<=>(const Move&) const = default;
+    friend std::ostream& operator<<(std::ostream& os, const Move& move);
 };
 
 MoveCollection possible_moves(const Board& board, const Meeple& meeple);
