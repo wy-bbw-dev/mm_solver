@@ -12,3 +12,7 @@ RUN pacman -Syyu --noconfirm \
     && rm -rf /var/cache/pacman/pkg/*
 RUN pacman -S --noconfirm wget curl
 WORKDIR /app
+
+RUN useradd -m ci
+
+USER ci
