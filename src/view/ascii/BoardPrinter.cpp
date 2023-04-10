@@ -92,7 +92,7 @@ ascii::BoardString ascii::print(const Board& board) {
     board_string.resize(PRINT_WIDTH(board) * PRINT_HEIGHT(board));
 
     // initialize board_string with spaces
-    std::fill(board_string.begin(), board_string.end(), ' ');
+    std::ranges::fill(board_string, ' ');
 
     add_linebreaks(board, board_string);
     printAxis(board, board_string);

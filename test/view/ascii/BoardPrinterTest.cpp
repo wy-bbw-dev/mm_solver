@@ -12,7 +12,6 @@
 #include <iostream>
 
 TEST_CASE("empty board should have a frame and letters", "[BoardPrinterTest]") {
-//    auto console = spdlog::stdout_color_mt("console");
     Board board(1,1);
     auto board_string = ascii::print(board);
     SECTION("each line should be 5 characters long and end with a line break") {

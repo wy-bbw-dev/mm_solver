@@ -1,4 +1,4 @@
-FROM archlinux:latest as builder
+FROM archlinux:latest
 RUN pacman -Syyu --noconfirm \
     && pacman -S --noconfirm base-devel \
     && pacman -S --noconfirm python python-pip \

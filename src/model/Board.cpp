@@ -5,14 +5,11 @@
 #include <model/Board.h>
 #include <cassert>
 
-Board::Board(Position maxWidth, Position maxHeight) {
-    this->maxWidth = maxWidth;
-    this->maxHeight = maxHeight;
-}
+Board::Board(Position maxWidth, Position maxHeight) : maxWidth(maxWidth), maxHeight(maxHeight) {}
 
 void Board::place_meeple(Meeple meeple, Coordinate coordinate) {
-    auto current_location = meeple_positions.find(meeple);
-    if (current_location != meeple_positions.end()) {
+
+    if (auto current_location = meeple_positions.find(meeple); current_location != meeple_positions.end()) {
         m_meeples_in_row[current_location->second.first].erase(meeple);
         m_meeples_in_column[current_location->second.second].erase(meeple);
     }
@@ -46,8 +43,8 @@ const CoordinateCollection&  Board::teleport_locations() const {
 
 PositionCollection Board::horizontal_barriers(const Position& position) const {
     PositionCollection stops;
-    auto range = m_horizontal_barriers.equal_range(position);
-    for (auto it = range.first; it != range.second; ++it) {
+    auto [begin, end] = m_horizontal_barriers.equal_range(position);
+    for (auto it = begin; it != end; ++it) {
         stops.push_back(it->second);
     }
     return stops;
@@ -55,8 +52,8 @@ PositionCollection Board::horizontal_barriers(const Position& position) const {
 
 PositionCollection Board::vertical_barriers(const Position &position) const {
     PositionCollection stops;
-    auto range = m_vertical_barriers.equal_range(position);
-    for (auto it = range.first; it != range.second; ++it) {
+    auto [begin, end] = m_vertical_barriers.equal_range(position);
+    for (auto it = begin; it != end; ++it) {
         stops.push_back(it->second);
     }
     return stops;
