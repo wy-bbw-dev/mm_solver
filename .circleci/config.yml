@@ -29,15 +29,15 @@ jobs:
           command: |
             cd build
             ctest . --output-on-failure
-            gcovr -r .. --sonarqube coverage.xml
+            gcovr -r .. --sonarqube coverage.xml --exclude-directories ../test
       - sonarcloud/scan
 orbs:
-  sonarcloud: sonarsource/sonarcloud@1.1.0
+  sonarcloud: sonarsource/sonarcloud@1.1.1
 workflows:
   main:
     jobs:
       - build:
-          context: SonarCloud
+          context: sonarcloud
           filters:
             branches:
               only:
