@@ -94,5 +94,35 @@ TEST_CASE("Move options when blocked by another meeple", "[Move]") {
         auto moves = possible_moves(board, Meeple::OZZY_MOSIS);
         REQUIRE(1 == moves.size());
         REQUIRE_THAT(moves, Catch::Matchers::VectorContains(Move{{2, 0}}));
+
+    }
+
+    SECTION("On a larger board, the meeple can move up to the field before another meeple") {
+        Board board(5, 5);
+        board.place_meeple(Meeple::OZZY_MOSIS, {1, 1});
+        board.place_meeple(Meeple::BLUE_BEAMER, {1, 4});
+        board.place_meeple(Meeple::CARBON, {4, 1});
+
+
+        auto moves = possible_moves(board, Meeple::OZZY_MOSIS);
+        REQUIRE(4 == moves.size());
+        REQUIRE_THAT(moves, Catch::Matchers::VectorContains(Move{{0, 1}}));
+        REQUIRE_THAT(moves, Catch::Matchers::VectorContains(Move{{1, 0}}));
+        REQUIRE_THAT(moves, Catch::Matchers::VectorContains(Move{{3, 1}}));
+        REQUIRE_THAT(moves, Catch::Matchers::VectorContains(Move{{1, 3}}));
+    }
+
+    SECTION("Symmetry is a given. I.e. the direction of blockage does not matter on large boards either") {
+        Board board(5, 5);
+        board.place_meeple(Meeple::OZZY_MOSIS, {3, 3});
+        board.place_meeple(Meeple::BLUE_BEAMER, {0, 3});
+        board.place_meeple(Meeple::CARBON, {3, 0});
+
+        auto moves = possible_moves(board, Meeple::OZZY_MOSIS);
+        REQUIRE(4 == moves.size());
+        REQUIRE_THAT(moves, Catch::Matchers::VectorContains(Move{{1, 3}}));
+        REQUIRE_THAT(moves, Catch::Matchers::VectorContains(Move{{3, 1}}));
+        REQUIRE_THAT(moves, Catch::Matchers::VectorContains(Move{{4, 3}}));
+        REQUIRE_THAT(moves, Catch::Matchers::VectorContains(Move{{3, 4}}));
     }
 }
