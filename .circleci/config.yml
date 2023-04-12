@@ -2,7 +2,7 @@ version: 2.1
 
 # Define the jobs we want to run for this project
 jobs:
-  build:
+  build_test_sonar:
     docker:
       - image: ghcr.io/wy-bbw/mm_solver_builder
         auth:
@@ -31,13 +31,41 @@ jobs:
             ctest . --output-on-failure
             gcovr -r .. --sonarqube coverage.xml --exclude-directories ../test
       - sonarcloud/scan
+  asan_build_test:
+    docker:
+      - image: ghcr.io/wy-bbw/mm_solver_builder
+        auth:
+          username: wy-bbw
+          password: $GITHUB_REGISTRY_PASSWORD
+    steps:
+      - checkout
+      - run:
+          name: build mmsolver with asan
+          command: |
+            mkdir build
+            cd build
+            conan profile detect
+            cmake .. -DCMAKE_CXX_COMPILER=g++ -DCMAKE_C_COMPILER=gcc -G Ninja -DCMAKE_BUILD_TYPE=Debug -DENABLE_COVERAGE=ON -DUSE_ASAN=ON
+            cmake --build .
+      - run:
+          name: run tests with asan
+          command: |
+            cd build
+            ctest . --output-on-failure
+
 orbs:
   sonarcloud: sonarsource/sonarcloud@1.1.1
 workflows:
   main:
     jobs:
-      - build:
+      - build_test_sonar:
           context: sonarcloud
+          filters:
+            branches:
+              only:
+                - develop
+                - master
+      - asan_build_test:
           filters:
             branches:
               only:
