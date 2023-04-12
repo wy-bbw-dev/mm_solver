@@ -31,8 +31,12 @@ option(USE_ASAN "enable address sanitizer" OFF)
 if (USE_ASAN)
     add_compile_options(-fsanitize=address -fno-omit-frame-pointer -fPIC)
     add_link_options(-fsanitize=address)
-else()
-    message(FATAL_ERROR "ASAN is required")
+endif()
+
+option(USE_UBSAN "enable undefined behavior sanitizer" OFF)
+if (USE_UBSAN)
+    add_compile_options(-fsanitize=undefined -fno-omit-frame-pointer -fPIC)
+    add_link_options(-fsanitize=undefined)
 endif()
 
 

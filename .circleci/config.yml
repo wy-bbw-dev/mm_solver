@@ -1,6 +1,5 @@
 version: 2.1
 
-# Define the jobs we want to run for this project
 jobs:
   build_test_sonar:
     docker:
@@ -45,10 +44,26 @@ jobs:
             mkdir build
             cd build
             conan profile detect
-            cmake .. -DCMAKE_CXX_COMPILER=g++ -DCMAKE_C_COMPILER=gcc -G Ninja -DCMAKE_BUILD_TYPE=Debug -DENABLE_COVERAGE=ON -DUSE_ASAN=ON
+            cmake .. -DCMAKE_CXX_COMPILER=g++ -DCMAKE_C_COMPILER=gcc -G Ninja -DCMAKE_BUILD_TYPE=Debug -DUSE_ASAN=ON
+            cmake --build .
+  ubsan_build_test:
+    docker:
+      - image: ghcr.io/wy-bbw/mm_solver_builder
+        auth:
+          username: wy-bbw
+          password: $GITHUB_REGISTRY_PASSWORD
+    steps:
+      - checkout
+      - run:
+          name: build mmsolver with ubsan
+          command: |
+            mkdir build
+            cd build
+            conan profile detect
+            cmake .. -DCMAKE_CXX_COMPILER=g++ -DCMAKE_C_COMPILER=gcc -G Ninja -DCMAKE_BUILD_TYPE=Debug -DUSE_UBSAN=ON
             cmake --build .
       - run:
-          name: run tests with asan
+          name: run tests with ubsan
           command: |
             cd build
             ctest . --output-on-failure
@@ -66,6 +81,12 @@ workflows:
                 - develop
                 - master
       - asan_build_test:
+          filters:
+            branches:
+              only:
+                - develop
+                - master
+      - ubsan_build_test:
           filters:
             branches:
               only:
