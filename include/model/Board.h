@@ -18,7 +18,6 @@
 
 using CoordinateCollection = std::vector<Coordinate>;
 using PositionCollection = std::vector<Position>;
-using MeepleSet = std::set<Meeple>;
 
 struct ColumnBlocks{
     const std::optional<Position> top;
@@ -44,8 +43,8 @@ public:
 
     void place_meeple(Meeple meeple, Coordinate coordinate);
 
-    void add_horizontal_barrier(Position x, Position y);
-    void add_vertical_barrier(Position x, Position y);
+    void add_blocking_floor(Position row, Position col);
+    void add_blocking_wall(Position row, Position col);
     void add_teleport(Coordinate coordinate);
 
     Coordinate meeple_location(const Meeple& meeple) const;
@@ -57,14 +56,16 @@ public:
 
     RowBlocks blocked_by_meeple_in_row(const Coordinate& coord) const;
     ColumnBlocks blocked_by_meeple_in_column(const Coordinate& coord) const;
+    ColumnBlocks blocks_by_floor(const Coordinate& coord) const;
+    RowBlocks blocks_by_wall(const Coordinate& coord) const;
 
 private:
     std::unordered_map<Meeple, Coordinate > meeple_positions;
     std::unordered_multimap<Position, Meeple> m_meeples_in_row;
     std::unordered_multimap<Position, Meeple> m_meeples_in_column;
 
-    std::unordered_multimap<Position, Position> m_horizontal_barriers;
-    std::unordered_multimap<Position, Position> m_vertical_barriers;
+    std::unordered_multimap<Position, Position> m_floor_blocks;
+    std::unordered_multimap<Position, Position> m_wall_blocks;
     CoordinateCollection teleport;
     Coordinate destination;
     Position maxWidth;

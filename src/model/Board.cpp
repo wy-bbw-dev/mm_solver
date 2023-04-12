@@ -34,14 +34,14 @@ void Board::place_meeple(Meeple meeple, Coordinate coordinate) {
     return;
 }
 
-void Board::add_horizontal_barrier(Position x, Position y) {
-    auto inserted_at = m_horizontal_barriers.insert({x, y });
-    assert(inserted_at != m_horizontal_barriers.end());
+void Board::add_blocking_floor(Position row, Position col) {
+    auto inserted_at = m_floor_blocks.insert({col, row });
+    assert(inserted_at != m_floor_blocks.end());
 }
 
-void Board::add_vertical_barrier(Position x, Position y) {
-    auto inserted_at = m_vertical_barriers.insert({y, x});
-    assert(inserted_at != m_vertical_barriers.end());
+void Board::add_blocking_wall(Position row, Position col) {
+    auto inserted_at = m_wall_blocks.insert({row, col});
+    assert(inserted_at != m_wall_blocks.end());
 }
 
 void Board::add_teleport(Coordinate coordinate) {
@@ -81,6 +81,54 @@ ColumnBlocks Board::blocked_by_meeple_in_column(const Coordinate& coord) const {
     return {blocked_up, blocked_down};
 }
 
+ColumnBlocks Board::blocks_by_floor(const Coordinate& coord) const {
+    auto [row, col] = coord;
+    std::optional<Position> blocked_up, blocked_down;
+    auto [begin, end] = m_floor_blocks.equal_range(col);
+    for (auto it = begin; it != end; ++it) {
+        if (it->second < row) {
+            if (blocked_up.has_value()) {
+                blocked_up = std::max(blocked_up.value(), it->second);
+            } else {
+                blocked_up = it->second;
+            }
+        }
+
+        if (it->second >= row) {
+            if (blocked_down.has_value()) {
+                blocked_down = std::min(blocked_down.value(), it->second);
+            } else {
+                blocked_down = it->second;
+            }
+        }
+    }
+    return {blocked_up, blocked_down};
+}
+
+RowBlocks Board::blocks_by_wall(const Coordinate &coord) const {
+    auto [row, col] = coord;
+    std::optional<Position> blocked_left, blocked_right;
+    auto [begin, end] = m_wall_blocks.equal_range(row);
+    for (auto it = begin; it != end; ++it) {
+        if (it->second < col) {
+            if (blocked_left.has_value()) {
+                blocked_left = std::max(blocked_left.value(), it->second);
+            } else {
+                blocked_left = it->second;
+            }
+        }
+
+        if (it->second >= col) {
+            if (blocked_right.has_value()) {
+                blocked_right = std::min(blocked_right.value(), it->second);
+            } else {
+                blocked_right = it->second;
+            }
+        }
+    }
+    return {blocked_left, blocked_right};
+}
+
 RowBlocks Board::blocked_by_meeple_in_row(const Coordinate& coord) const {
     auto [row, col] = coord;
     auto [meeples_begin, meeples_end] = m_meeples_in_row.equal_range(row);
@@ -108,7 +156,7 @@ RowBlocks Board::blocked_by_meeple_in_row(const Coordinate& coord) const {
 
 PositionCollection Board::horizontal_barriers(const Position& position) const {
     PositionCollection stops;
-    auto [begin, end] = m_horizontal_barriers.equal_range(position);
+    auto [begin, end] = m_floor_blocks.equal_range(position);
     for (auto it = begin; it != end; ++it) {
         stops.push_back(it->second);
     }
@@ -117,7 +165,7 @@ PositionCollection Board::horizontal_barriers(const Position& position) const {
 
 PositionCollection Board::vertical_barriers(const Position &position) const {
     PositionCollection stops;
-    auto [begin, end] = m_vertical_barriers.equal_range(position);
+    auto [begin, end] = m_wall_blocks.equal_range(position);
     for (auto it = begin; it != end; ++it) {
         stops.push_back(it->second);
     }

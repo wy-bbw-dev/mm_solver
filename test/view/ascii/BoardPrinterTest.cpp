@@ -72,7 +72,7 @@ TEST_CASE("board a teleport should have a T at (0,0)", "[BoardPrinterTest]") {
 
 TEST_CASE("board with a horizontal barrier should have a frame and letters and the barrier", "[BoardPrinterTest]") {
     Board board(2,2);
-    board.add_horizontal_barrier(0, 0);
+    board.add_blocking_floor(0, 0);
     auto board_string = ascii::print(board);
     REQUIRE(board_string.size() == 42);
     REQUIRE(board_string[2] == 'A');
@@ -84,7 +84,7 @@ TEST_CASE("board with a horizontal barrier should have a frame and letters and t
 
 TEST_CASE("board with a vertical should have frame and letters and the barrier", "[BoardPrinterTest") {
     Board board(2,2);
-    board.add_vertical_barrier(0, 0);
+    board.add_blocking_wall(0, 0);
     auto board_string = ascii::print(board);
     REQUIRE(board_string.size() == 42);
 
