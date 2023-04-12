@@ -154,21 +154,20 @@ RowBlocks Board::blocked_by_meeple_in_row(const Coordinate& coord) const {
     return {blocked_left, blocked_right};
 }
 
-PositionCollection Board::horizontal_barriers(const Position& position) const {
+PositionCollection Board::floors(const Position& column) const {
     PositionCollection stops;
-    auto [begin, end] = m_floor_blocks.equal_range(position);
+    auto [begin, end] = m_floor_blocks.equal_range(column);
     for (auto it = begin; it != end; ++it) {
         stops.push_back(it->second);
     }
     return stops;
 }
 
-PositionCollection Board::vertical_barriers(const Position &position) const {
+PositionCollection Board::walls(const Position &row) const {
     PositionCollection stops;
-    auto [begin, end] = m_wall_blocks.equal_range(position);
-    for (auto it = begin; it != end; ++it) {
-        stops.push_back(it->second);
-    }
+    auto [begin, end] = m_wall_blocks.equal_range(row);
+    stops.reserve(std::distance(begin, end));
+    std::transform(begin, end, std::back_inserter(stops), [](const auto& pair) { return pair.second; });
     return stops;
 }
 
@@ -178,4 +177,12 @@ Position Board::width() const {
 
 Position Board::height() const {
     return maxHeight;
+}
+
+void Board::set_destination(Coordinate coordinate) {
+    m_destination = coordinate;
+}
+
+Coordinate Board::destination() const {
+    return m_destination;
 }

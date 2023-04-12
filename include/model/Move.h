@@ -6,12 +6,9 @@
 
 #include <cstdint>
 #include <ostream>
+#include <vector>
 #include "typedefs.h"
 #include "Meeple.h"
-#include "Board.h"
-
-struct Move;
-using MoveCollection = std::vector<Move>;
 
 struct Move {
     Coordinate to;
@@ -19,7 +16,4 @@ struct Move {
     friend std::ostream& operator<<(std::ostream& os, const Move& move);
 };
 
-MoveCollection possible_moves(const Board& board, const Meeple& meeple);
-
-template<Meeple meeple>
-MoveCollection possible_special_moves(const Board& board);
+using MoveCollection = std::vector<Move>;

@@ -45,7 +45,10 @@ add_library(mm_solver_lib OBJECT)
 target_sources(mm_solver_lib PRIVATE
         src/model/Board.cpp
         src/model/Move.cpp
+        src/model/MoveComputations.cpp
         src/view/ascii/BoardPrinter.cpp
+        src/controller/BacktrackingController.cpp
+        src/controller/SolutionActions.cpp
         )
 
 target_link_libraries(mm_solver_lib PUBLIC

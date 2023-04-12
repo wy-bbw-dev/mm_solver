@@ -46,6 +46,11 @@ jobs:
             conan profile detect
             cmake .. -DCMAKE_CXX_COMPILER=g++ -DCMAKE_C_COMPILER=gcc -G Ninja -DCMAKE_BUILD_TYPE=Debug -DUSE_ASAN=ON
             cmake --build .
+      - run:
+          name: run tests with asan
+          command: |
+            cd build
+            ctest . --output-on-failure
   ubsan_build_test:
     docker:
       - image: ghcr.io/wy-bbw/mm_solver_builder

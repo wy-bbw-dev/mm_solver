@@ -40,17 +40,24 @@ struct std::hash<Coordinate> {
 class Board {
 public:
     Board(Position maxWidth, Position maxHeight);
+    ~Board() = default;
+    Board(const Board& other) = default;
+    Board(Board&& other) noexcept = default;
+    Board& operator=(const Board& other) = default;
+    Board& operator=(Board&& other) noexcept = default;
 
     void place_meeple(Meeple meeple, Coordinate coordinate);
 
     void add_blocking_floor(Position row, Position col);
     void add_blocking_wall(Position row, Position col);
     void add_teleport(Coordinate coordinate);
+    void set_destination(Coordinate coordinate);
+    Coordinate destination() const;
 
     Coordinate meeple_location(const Meeple& meeple) const;
     const CoordinateCollection& teleport_locations() const;
-    PositionCollection horizontal_barriers(const Position& position) const;
-    PositionCollection vertical_barriers(const Position& position) const;
+    PositionCollection floors(const Position& column) const;
+    PositionCollection walls(const Position& row) const;
     Position width() const;
     Position height() const;
 
@@ -67,7 +74,7 @@ private:
     std::unordered_multimap<Position, Position> m_floor_blocks;
     std::unordered_multimap<Position, Position> m_wall_blocks;
     CoordinateCollection teleport;
-    Coordinate destination;
+    Coordinate m_destination;
     Position maxWidth;
     Position maxHeight;
 };

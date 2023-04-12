@@ -6,6 +6,8 @@
 #include <catch2/matchers/catch_matchers_vector.hpp>
 #include <model/Board.h>
 #include <model/Move.h>
+#include <model/MoveComputations.h>
+#include <model/Meeple.h>
 #include <algorithm>
 
 TEST_CASE("Move options on a  free board", "[Move]") {

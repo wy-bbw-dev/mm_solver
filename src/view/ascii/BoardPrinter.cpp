@@ -70,16 +70,16 @@ namespace {
 
     void printBarriers(const Board &board, ascii::BoardString &board_string) {
         for (int i = 0; i < board.height(); ++i) {
-            PositionCollection barriers = board.horizontal_barriers(i);
-            for (const Position barrier_position : barriers) {
+            PositionCollection walls = board.walls(i);
+            for (const Position barrier_position : walls) {
                 Position index = string_index(board, {i, barrier_position });
                 board_string[index + 1] = '|';
             }
         }
 
         for (int i = 0; i < board.width(); ++i) {
-            PositionCollection barriers = board.vertical_barriers(i);
-            for (const Position barrier_position : barriers) {
+            PositionCollection floors = board.floors(i);
+            for (const Position barrier_position : floors) {
                 Position index = string_index(board, {barrier_position, i});
                 board_string[index + PRINT_WIDTH(board)] = '-';
             }
