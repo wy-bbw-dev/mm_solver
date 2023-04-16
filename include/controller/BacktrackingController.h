@@ -11,8 +11,9 @@
 
 class BacktrackingController {
 public:
-    BacktrackingController(std::vector<Meeple> availableMeeples);
+    BacktrackingController(const std::vector<Meeple>& availableMeeples);
     Solution solve(Board board);
+    void run_backtracking_for_meeple(Board& board, Solution& solution, std::set<Meeple> usedMeeples);
 private:
-    std::vector<Meeple> availableMeeples;
+    std::set<Meeple> availableMeeples;
 };

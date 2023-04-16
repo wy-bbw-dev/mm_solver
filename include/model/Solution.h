@@ -4,6 +4,13 @@
 
 #pragma once
 
-#include <model/Meeple.h>
+#include <list>
+#include <array>
 
-class Solution {};
+#include <model/Meeple.h>
+#include <model/Move.h>
+
+struct Solution {
+    std::array<std::pair<Meeple, std::list<Move>>, 3> moves_by_meeple;
+    bool success = false;
+};
